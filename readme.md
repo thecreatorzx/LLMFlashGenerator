@@ -130,18 +130,6 @@ Answer: A data structure where each node has at most two children.
 
 ---
 
-## 🧾 License
-
-This project is open-source under the [MIT License](LICENSE).
-
----
-
-## 🙌 Acknowledgements
-
-- HuggingFace Transformers
-- Google FLAN-T5 model
-- Flask Framework
-
 ```
 
 ```
