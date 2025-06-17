@@ -12,18 +12,13 @@ UPLOAD_FOLDER = "uploads"
 OUTPUT_FOLDER = "output"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-# Create directories if they don't exist
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
-if not os.path.exists(OUTPUT_FOLDER):
-    os.makedirs(OUTPUT_FOLDER)
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
-# Set device (GPU if available, else CPU)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(f"Using device: {device}")  # Debug: Confirm device
+print(f"Using device: {device}")
 
-# Load Flan-T5 model and tokenizer
-model_name = "google/flan-t5-small"  # Lightweight model
+model_name = "google/flan-t5-large"
 tokenizer = T5Tokenizer.from_pretrained(model_name)
 model = T5ForConditionalGeneration.from_pretrained(model_name).to(device)
 
@@ -34,13 +29,11 @@ def index():
         text_input = request.form.get("text_input")
         file = request.files.get("file_input")
 
-        # Input validation
         if not text_input and not file:
             return render_template("index.html", error="Please provide text or a file.")
         if file and not (file.filename.endswith(".txt") or file.filename.endswith(".pdf")):
             return render_template("index.html", error="Only .txt and .pdf files are supported.")
 
-        # Extract content
         if file and file.filename:
             file_path = os.path.join(app.config["UPLOAD_FOLDER"], file.filename)
             file.save(file_path)
@@ -51,26 +44,26 @@ def index():
         if not content.strip():
             return render_template("index.html", error="Input content is empty.")
 
-        # Chunk content for Flan-T5
         chunk_size = 1000
         content_chunks = [content[i:i + chunk_size] for i in range(0, len(content), chunk_size)]
+        
         all_flashcards = []
-        for chunk in content_chunks[:2]:  # Limit to 2 chunks
+        for chunk in content_chunks[:3]:  # Use first 3 chunks to get ~10+ cards
             flashcards = generate_flash(chunk, subject)
             all_flashcards.extend(flashcards)
-        # Remove duplicates based on question
+
+        # Deduplicate based on questions
         seen_questions = set()
         unique_flashcards = []
         for card in all_flashcards:
-            if card['question'] not in seen_questions:
+            if card["question"] not in seen_questions:
                 unique_flashcards.append(card)
-                seen_questions.add(card['question'])
+                seen_questions.add(card["question"])
 
         save_flashcards(unique_flashcards, subject)
         return render_template("flashcards.html", flashcards=unique_flashcards, subject=subject)
     return render_template("index.html")
 
-# Extract text from a PDF file using PyPDF2
 def extract_text_from_pdf(file_path):
     try:
         with open(file_path, "rb") as file:
@@ -79,66 +72,86 @@ def extract_text_from_pdf(file_path):
     except Exception as e:
         return f"Error reading PDF: {str(e)}"
 
-# Generate flashcards using Flan-T5
 def generate_flash(content, subject):
     prompt = f"""
-Generate 5-10 flashcards for {subject} from this content: {content[:1000]}. Each flashcard should have a question, answer, and difficulty (Easy, Medium, Hard). Use '{subject}' as the topic for all flashcards. Return valid JSON in ```json\n...\n```.
-Example:
-```json
-[{{"question": "What is X?", "answer": "X is Y.", "topic": "{subject}", "difficulty": "Easy"}}]
-```
-"""
-    max_retries = 3
-    for attempt in range(max_retries):
-        try:
-            inputs = tokenizer(prompt, return_tensors="pt", max_length=512, truncation=True).to(device)
-            outputs = model.generate(
-                inputs["input_ids"],
-                max_length=800,
-                num_beams=4,
-                early_stopping=True
-            )
-            response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-            print(f"Flan-T5 response: {response}")  # Debug: Inspect model output
-            # Extract JSON from response
-            if response.startswith("```json") and response.endswith("```"):
-                response = response[7:-3].strip()
-            flashcards = json.loads(response)
-            # Ensure all flashcards have required fields
-            for card in flashcards:
-                if 'topic' not in card or not card['topic']:
-                    card['topic'] = subject
-                if 'difficulty' not in card:
-                    card['difficulty'] = 'Medium'
-            return flashcards[:10]
-        except json.JSONDecodeError:
-            if attempt == max_retries - 1:
-                # Fallback: Generate minimal flashcard
-                return [
-                    {
-                        "question": "What is the main topic of the content?",
-                        "answer": f"The content focuses on {subject}.",
-                        "topic": subject,
-                        "difficulty": "Easy"
-                    }
-                ]
-        except Exception as e:
-            return [{"question": "Error", "answer": f"Model error: {str(e)}", "topic": subject, "difficulty": "N/A"}]
+You are a helpful AI that generates study flashcards from educational text. Based on the topic "{subject}", extract exactly 5 flashcards from the following content.
 
-# Save flashcards to CSV, JSON, and Anki-compatible text
+Each flashcard must strictly follow this format:
+Question: <Your question>
+Answer: <Concise and accurate answer>
+Difficulty: <Easy/Medium/Hard>
+
+Only output the 5 flashcards, no explanations or introductions.
+
+Content:
+\"\"\"
+{content.strip()[:800]}
+\"\"\"
+"""
+
+    try:
+        inputs = tokenizer(prompt, return_tensors="pt", max_length=768, truncation=True).to(device)
+        outputs = model.generate(
+            inputs["input_ids"],
+            max_length=1024,
+            num_beams=4,
+            do_sample=True,
+            temperature=0.7,
+            top_p=0.9,
+            early_stopping=True
+        )
+        response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+        print("\n===== FLAN-T5 OUTPUT =====\n" + response)
+
+        flashcards = []
+        blocks = response.strip().split("\n\n")
+        for block in blocks:
+            lines = [line.strip() for line in block.splitlines() if line.strip()]
+            question = answer = difficulty = ""
+            for line in lines:
+                if line.lower().startswith("question:"):
+                    question = line.split(":", 1)[1].strip()
+                elif line.lower().startswith("answer:"):
+                    answer = line.split(":", 1)[1].strip()
+                elif line.lower().startswith("difficulty:"):
+                    diff = line.split(":", 1)[1].strip().capitalize()
+                    if diff in ["Easy", "Medium", "Hard"]:
+                        difficulty = diff
+            if question and answer:
+                flashcards.append({
+                    "question": question,
+                    "answer": answer,
+                    "topic": subject,
+                    "difficulty": difficulty or "Medium"
+                })
+
+        # If still none parsed, return fallback
+        return flashcards if flashcards else fallback_card(content, subject)
+
+    except Exception as e:
+        print(f"Model error: {str(e)}")
+        return fallback_card(content, subject)
+
+
+def fallback_card(content, subject):
+    fallback_question = "What is a key point mentioned in the content?"
+    fallback_answer = content.strip().split(".")[0] + "." if "." in content else content.strip()
+    return [{
+        "question": fallback_question,
+        "answer": fallback_answer,
+        "topic": subject,
+        "difficulty": "Medium"
+    }]
+
 def save_flashcards(flashcards, subject):
-    # Save as CSV
     df = pd.DataFrame(flashcards)
-    df.to_csv(f"output/flashcards_{subject}.csv", index=False)
-    # Save as JSON
-    with open(f"output/flashcards_{subject}.json", "w") as f:
+    df.to_csv(f"{OUTPUT_FOLDER}/flashcards_{subject}.csv", index=False)
+    with open(f"{OUTPUT_FOLDER}/flashcards_{subject}.json", "w") as f:
         json.dump(flashcards, f, indent=2)
-    # Save as Anki (tab-separated)
-    with open(f"output/flashcards_{subject}.txt", "w") as f:
+    with open(f"{OUTPUT_FOLDER}/flashcards_{subject}.txt", "w") as f:
         for card in flashcards:
             f.write(f"{card['question']}\t{card['answer']}\n")
 
-# Route for downloading files
 @app.route("/download/<filename>")
 def download_file(filename):
     return send_from_directory(OUTPUT_FOLDER, filename, as_attachment=True)

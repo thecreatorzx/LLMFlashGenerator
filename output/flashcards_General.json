@@ -1,8 +1,8 @@
 [
   {
-    "question": "What is the main topic of the content?",
-    "answer": "The content focuses on General.",
+    "question": "What is a key point mentioned in the content?",
+    "answer": "Data structures like arrays, linked lists, stacks, and queues are foundational in computer science.",
     "topic": "General",
-    "difficulty": "Easy"
+    "difficulty": "Medium"
   }
 ]

@@ -1,8 +1,8 @@
 [
   {
-    "question": "Error",
-    "answer": "Failed to parse model response after retries",
+    "question": "What is a key point mentioned in the content?",
+    "answer": "In computer science, data structures are essential for efficiently organizing, processing, and retrieving data.",
     "topic": "History",
-    "difficulty": "N/A"
+    "difficulty": "Medium"
   }
 ]
