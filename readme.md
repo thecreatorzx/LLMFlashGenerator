@@ -103,17 +103,6 @@ Answer: Paris
 
 ---
 
-## Project Structure
-
-.
-├── app.py # Flask API for flashcard generation
-├── main.py # Core functionality (question/answer generation)
-├── BulletPoints.py # (Additional script, e.g. for preprocessing)
-├── requirements.txt # Python dependencies
-└── README.md # This documentation
-
----
-
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

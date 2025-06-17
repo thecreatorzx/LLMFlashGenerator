@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Flashcard Generator</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <h1>Flashcard Generator</h1>
+    <form method="post" enctype="multipart/form-data">
+      <label for="subject">Subject:</label>
+      <select name="subject">
+        <option value="General">General</option>
+        <option value="Biology">Biology</option>
+        <option value="History">History</option>
+        <option value="CS">Computer Science</option></select
+      ><br /><br />
+      <label for="text_input">Paste Text:</label><br />
+      <textarea name="text_input" rows="10" cols="50"></textarea><br /><br />
+      <label for="file_input">Or Upload File (.txt or .pdf):</label><br />
+      <input type="file" name="file_input" accept=".txt,.pdf" /><br /><br />
+      <input type="submit" value="Generate Flashcards" />
+    </form>
+    {% if error %}
+    <p style="color: red">{{ error }}</p>
+    {% endif %}
+  </body>
+</html>

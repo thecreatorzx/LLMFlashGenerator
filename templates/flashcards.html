@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Generated Flashcards</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Flashcards for {{ subject }}</h1>
+    {% set current_topic = '' %}
+    {% for flashcard in flashcards %}
+        {% if flashcard.topic != current_topic %}
+            {% if current_topic != '' %}
+                </div> <!-- Close previous topic div -->
+            {% endif %}
+            <h2>{{ flashcard.topic }}</h2>
+            <div class="topic-group">
+            {% set current_topic = flashcard.topic %}
+        {% endif %}
+        <div class="flashcard">
+            <p><strong>Question:</strong> {{ flashcard.question }}</p>
+            <p><strong>Answer:</strong> {{ flashcard.answer }}</p>
+            <p><strong>Difficulty:</strong> {{ flashcard.difficulty | default('Medium') }}</p>
+            <button onclick="editFlashcard('{{ loop.index0 }}')">Edit</button>
+        </div>
+    {% endfor %}
+    {% if current_topic != '' %}
+        </div> <!-- Close final topic div -->
+    {% endif %}
+    <br>
+    <a href="{{ url_for('download_file', filename='flashcards_' + subject + '.csv') }}">Download as CSV</a> |
+    <a href="{{ url_for('download_file', filename='flashcards_' + subject + '.json') }}">Download as JSON</a> |
+    <a href="{{ url_for('download_file', filename='flashcards_' + subject + '.txt') }}">Download for Anki</a> |
+    <a href="{{ url_for('index') }}">Generate New Flashcards</a>
+    <script>
+        function editFlashcard(index) {
+            let question = prompt("Edit Question:", "{{ flashcards[index].question }}");
+            let answer = prompt("Edit Answer:", "{{ flashcards[index].answer }}");
+            if (question && answer) {
+                alert("Edit saved (Note: This is a demo; edits are not persisted in this prototype).");
+            }
+        }
+    </script>
+</body>
+</html>
