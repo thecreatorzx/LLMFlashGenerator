@@ -1,4 +1,3 @@
-```
 # 📚 Flashcard Generator using FLAN-T5
 
 This project is a web-based **Flashcard Generator** powered by the `google/flan-t5-large` model. Users can input raw text or upload `.txt`/`.pdf` files, and the app will extract content to generate **concise flashcards** (question-answer pairs) with difficulty ratings.
@@ -17,6 +16,7 @@ This project is a web-based **Flashcard Generator** powered by the `google/flan-
 ---
 
 ## 📂 Project Structure
+
 ```
 
 LLMFlashGenerator/
@@ -34,7 +34,7 @@ LLMFlashGenerator/
 ├── requirements.txt # Python dependencies
 └── README.md # You're here!
 
-````
+```
 
 ---
 
@@ -45,7 +45,7 @@ LLMFlashGenerator/
 ```bash
 git clone https://github.com/<your-username>/LLMFlashGenerator.git
 cd LLMFlashGenerator
-````
+```
 
 ### 2. Create a Python Virtual Environment (Recommended)
 
