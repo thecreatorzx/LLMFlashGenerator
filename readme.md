@@ -22,7 +22,8 @@ LLMFlashGenerator/
 ├── app.py # Main Flask backend
 ├── templates/
 │ ├── index.html # Upload & input page
-│ └── flashcards.html # Display generated flashcards
+│ └── flashcards.html # Display generated
+flashcards
 │
 ├── static/
 │ └── style.css # Basic UI styling
@@ -31,7 +32,6 @@ LLMFlashGenerator/
 ├── output/ # Output flashcards (CSV, JSON, TXT)
 ├── requirements.txt # Python dependencies
 └── README.md # You're here!
-
 `
 
 ---
@@ -41,7 +41,8 @@ LLMFlashGenerator/
 ### 1. Clone the Repository
 
 bash
-git clone https://github.com/<your-username>/LLMFlashGenerator.git
+git clone https://github.com/<your-username>
+LLMFlashGenerator.git
 cd LLMFlashGenerator
 `
 
