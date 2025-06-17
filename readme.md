@@ -1,108 +1,147 @@
-# Flashcard Generator
+```markdown
+# 📚 Flashcard Generator using FLAN-T5
 
-The **Flashcard Generator** project utilizes a BART-based NLP model to automatically generate flashcards (question-answer pairs) from a given text. It provides a RESTful API endpoint to create flashcards based on user input. The project leverages natural language processing and deep learning techniques (NLTK, Transformers, Sentence-BERT) to extract relevant information and produce high-quality flashcards for efficient learning.
-
----
-
-## Features
-
-- Tokenize the input text into sentences using the `nltk` library.
-- Generate questions from each sentence using the `text2text-generation` pipeline (T5-based language models).
-- Rank the generated questions based on their relevance using **Sentence-BERT** (sentence embeddings).
-- Select the most significant questions based on the ranking.
-- Find accurate answers to the selected questions within the input text using a **BART-based** model.
-- Create a set of flashcards, each containing a generated question and its corresponding answer.
+This project is a web-based **Flashcard Generator** powered by the `google/flan-t5-large` model. Users can input raw text or upload `.txt`/`.pdf` files, and the app will extract content to generate **concise flashcards** (question-answer pairs) with difficulty ratings.
 
 ---
 
-## Requirements
+## ✨ Features
 
-- Python 3.x
-- `nltk` – Natural Language Toolkit for text processing and tokenization
-- `transformers` – Hugging Face Transformers library (to load BART and tokenizer)
-- `torch` – PyTorch (deep learning framework)
-- `sentence-transformers` – Sentence Transformer library (for encoding questions and computing similarity scores)
-- `flask` – Flask web framework (for API endpoint)
-
----
-
-## Setup Instructions
-
-1. **Clone the repository:**
-
-   bash
-   git clone https://github.com/your-username/Flashcard-Generator.git
-   cd Flashcard-Generator
-
-2. **Install dependencies:**
-
-   bash
-   pip install flask transformers sentence-transformers nltk
-
-3. **Download NLTK data (if needed):**
-
-   bash
-   python -m nltk.downloader punkt
-
-   The NLTK `punkt` tokenizer data is required for sentence tokenization.
+- 🧠 Uses FLAN-T5 for generating meaningful flashcards
+- 📁 Upload `.txt` or `.pdf` files
+- 🖊️ Custom text input also supported
+- 🔖 Flashcards tagged with `Easy`, `Medium`, or `Hard` difficulty
+- 💾 Saves flashcards as `.csv`, `.json`, and `.txt`
+- 💻 Simple web UI using Flask
 
 ---
 
-## Usage
+## 📂 Project Structure
+```
 
-1. **Run the API:**
+LLMFlashGenerator/
+│
+├── app.py # Main Flask backend
+├── templates/
+│ ├── index.html # Upload & input page
+│ └── flashcards.html # Display generated flashcards
+│
+├── static/
+│ └── style.css # Basic UI styling
+│
+├── uploads/ # Uploaded files (.txt/.pdf)
+├── output/ # Output flashcards (CSV, JSON, TXT)
+├── requirements.txt # Python dependencies
+└── README.md # You're here!
 
-   bash
-   python app.py
-
-   This starts the Flask server on `http://localhost:5000`.
-
-2. **Send a POST request** to the `/generate_flashcards` endpoint with a JSON payload.
-
-   - **Endpoint:**  
-     `http://localhost:5000/generate_flashcards`
-
-   - **Request Body (JSON):**
-
-     json
-     {
-     "num_flashcards_limit": 5,
-     "text": "Enter your text here."
-     }
-
-   - Replace `"Enter your text here."` with the content you want to generate flashcards from.
-   - Set `num_flashcards_limit` to the number of flashcards you wish to receive.
-
-3. **Parameters:**
-
-   - `text` (string): The input text from which flashcards will be generated.
-   - `num_flashcards_limit` (integer): The number of flashcards to create.
-
-4. **Example Response:**
-
-   json
-   {
-   "flashcards": [
-   {
-   "question": "Question 1",
-   "answer": "Answer 1"
-   },
-   {
-   "question": "Question 2",
-   "answer": "Answer 2"
-   }
-   ]
-   }
+````
 
 ---
 
-## Example Flashcard
+## 🚀 Setup Instructions
 
-Question: What is the capital of France?
-Answer: Paris
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/<your-username>/LLMFlashGenerator.git
+cd LLMFlashGenerator
+````
+
+### 2. Create a Python Virtual Environment (Recommended)
+
+```bash
+python -m venv venv
+source venv/bin/activate       # On Linux/macOS
+venv\Scripts\activate          # On Windows
+```
+
+### 3. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+If you don’t have a `requirements.txt`, create one with:
+
+```txt
+flask
+transformers
+torch
+pandas
+PyPDF2
+```
+
+Then install with:
+
+```bash
+pip install flask transformers torch pandas PyPDF2
+```
 
 ---
 
-## License
+### 4. Run the App
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+```bash
+python app.py
+```
+
+Then open your browser and go to:
+
+```
+http://127.0.0.1:5000
+```
+
+---
+
+## 🧪 Sample Usage
+
+You can enter text like:
+
+```text
+Binary trees are a type of data structure where each node has at most two children. Stacks and queues are used for linear data organization.
+```
+
+Or upload a `.pdf` file with educational content.
+
+---
+
+## 📤 Output
+
+Flashcards will be saved in the `output/` folder in:
+
+- `flashcards_<subject>.csv`
+- `flashcards_<subject>.json`
+- `flashcards_<subject>.txt`
+
+Example `.txt` output:
+
+```
+Question: What is a binary tree?
+Answer: A data structure where each node has at most two children.
+```
+
+---
+
+## 🛠️ Notes
+
+- Default model: `google/flan-t5-large`
+- Requires ~13GB VRAM (if using CUDA GPU)
+- If no GPU, performance may be slower (CPU fallback enabled)
+
+---
+
+## 🧾 License
+
+This project is open-source under the [MIT License](LICENSE).
+
+---
+
+## 🙌 Acknowledgements
+
+- HuggingFace Transformers
+- Google FLAN-T5 model
+- Flask Framework
+
+```
+
+```
