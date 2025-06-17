@@ -17,22 +17,22 @@ This project is a web-based **Flashcard Generator** powered by the `google/flan-
 
 ## 📂 Project Structure
 
+```
 LLMFlashGenerator/
 │
-├── app.py # Main Flask backend
+├── app.py                # Main Flask backend
 ├── templates/
-│ ├── index.html # Upload & input page
-│ └── flashcards.html # Display generated
-flashcards
+│   ├── index.html        # Upload & input page
+│   └── flashcards.html   # Display generated flashcards
 │
 ├── static/
-│ └── style.css # Basic UI styling
+│   └── style.css         # Basic UI styling
 │
-├── uploads/ # Uploaded files (.txt/.pdf)
-├── output/ # Output flashcards (CSV, JSON, TXT)
-├── requirements.txt # Python dependencies
-└── README.md # You're here!
-`
+├── uploads/              # Uploaded files (.txt/.pdf)
+├── output/               # Output flashcards (CSV, JSON, TXT)
+├── requirements.txt      # Python dependencies
+└── README.md             # You're here!
+```
 
 ---
 
