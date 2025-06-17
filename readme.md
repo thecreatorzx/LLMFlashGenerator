@@ -1,3 +1,4 @@
+```
 # 📚 Flashcard Generator using FLAN-T5
 
 This project is a web-based **Flashcard Generator** powered by the `google/flan-t5-large` model. Users can input raw text or upload `.txt`/`.pdf` files, and the app will extract content to generate **concise flashcards** (question-answer pairs) with difficulty ratings.
@@ -16,23 +17,24 @@ This project is a web-based **Flashcard Generator** powered by the `google/flan-
 ---
 
 ## 📂 Project Structure
-
 ```
+
 LLMFlashGenerator/
 │
-├── app.py                # Main Flask backend
+├── app.py # Main Flask backend
 ├── templates/
-│   ├── index.html        # Upload & input page
-│   └── flashcards.html   # Display generated flashcards
+│ ├── index.html # Upload & input page
+│ └── flashcards.html # Display generated flashcards
 │
 ├── static/
-│   └── style.css         # Basic UI styling
+│ └── style.css # Basic UI styling
 │
-├── uploads/              # Uploaded files (.txt/.pdf)
-├── output/               # Output flashcards (CSV, JSON, TXT)
-├── requirements.txt      # Python dependencies
-└── README.md             # You're here!
-```
+├── uploads/ # Uploaded files (.txt/.pdf)
+├── output/ # Output flashcards (CSV, JSON, TXT)
+├── requirements.txt # Python dependencies
+└── README.md # You're here!
+
+````
 
 ---
 
@@ -40,48 +42,54 @@ LLMFlashGenerator/
 
 ### 1. Clone the Repository
 
-bash
-git clone https://github.com/<your-username>
-LLMFlashGenerator.git
+```bash
+git clone https://github.com/<your-username>/LLMFlashGenerator.git
 cd LLMFlashGenerator
-`
+````
 
 ### 2. Create a Python Virtual Environment (Recommended)
 
-bash
+```bash
 python -m venv venv
-source venv/bin/activate # On Linux/macOS
-venv\Scripts\activate # On Windows
+source venv/bin/activate       # On Linux/macOS
+venv\Scripts\activate          # On Windows
+```
 
 ### 3. Install Dependencies
 
-bash
+```bash
 pip install -r requirements.txt
+```
 
 If you don’t have a `requirements.txt`, create one with:
 
-txt
+```txt
 flask
 transformers
 torch
 pandas
 PyPDF2
+```
 
 Then install with:
 
-bash
+```bash
 pip install flask transformers torch pandas PyPDF2
+```
 
 ---
 
 ### 4. Run the App
 
-bash
+```bash
 python app.py
+```
 
 Then open your browser and go to:
 
+```
 http://127.0.0.1:5000
+```
 
 ---
 
@@ -89,8 +97,9 @@ http://127.0.0.1:5000
 
 You can enter text like:
 
-text
+```text
 Binary trees are a type of data structure where each node has at most two children. Stacks and queues are used for linear data organization.
+```
 
 Or upload a `.pdf` file with educational content.
 
@@ -106,8 +115,10 @@ Flashcards will be saved in the `output/` folder in:
 
 Example `.txt` output:
 
+```
 Question: What is a binary tree?
 Answer: A data structure where each node has at most two children.
+```
 
 ---
 
@@ -130,3 +141,7 @@ This project is open-source under the [MIT License](LICENSE).
 - HuggingFace Transformers
 - Google FLAN-T5 model
 - Flask Framework
+
+```
+
+```
