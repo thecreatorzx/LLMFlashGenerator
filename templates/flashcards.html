@@ -17,11 +17,11 @@
             <div class="topic-group">
             {% set current_topic = flashcard.topic %}
         {% endif %}
-        <div class="flashcard">
+        <div class="flashcard" data-question="{{ flashcard.question | e }}" data-answer="{{ flashcard.answer | e }}">
             <p><strong>Question:</strong> {{ flashcard.question }}</p>
             <p><strong>Answer:</strong> {{ flashcard.answer }}</p>
             <p><strong>Difficulty:</strong> {{ flashcard.difficulty | default('Medium') }}</p>
-            <button onclick="editFlashcard('{{ loop.index0 }}')">Edit</button>
+            <button onclick="editFlashcard(this)">Edit</button>
         </div>
     {% endfor %}
     {% if current_topic != '' %}
@@ -33,10 +33,13 @@
     <a href="{{ url_for('download_file', filename='flashcards_' + subject + '.txt') }}">Download for Anki</a> |
     <a href="{{ url_for('index') }}">Generate New Flashcards</a>
     <script>
-        function editFlashcard(index) {
-            let question = prompt("Edit Question:", "{{ flashcards[index].question }}");
-            let answer = prompt("Edit Answer:", "{{ flashcards[index].answer }}");
-            if (question && answer) {
+        function editFlashcard(button) {
+            const flashcardDiv = button.parentElement;
+            const question = flashcardDiv.getAttribute('data-question');
+            const answer = flashcardDiv.getAttribute('data-answer');
+            const newQuestion = prompt("Edit Question:", question);
+            const newAnswer = prompt("Edit Answer:", answer);
+            if (newQuestion && newAnswer) {
                 alert("Edit saved (Note: This is a demo; edits are not persisted in this prototype).");
             }
         }
