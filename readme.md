@@ -129,7 +129,3 @@ Answer: A data structure where each node has at most two children.
 - If no GPU, performance may be slower (CPU fallback enabled)
 
 ---
-
-```
-
-```
